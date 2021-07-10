@@ -73,7 +73,7 @@ const userPatch = (req, res = response) => {
 }
 
 const userDelete = async(req, res = response) => {
-    const { id } = req.params;
+    const { id }   = req.params;
 
     // Eliminacion fisica...
     // const user = await User.findByIdAndDelete( id );
