@@ -7,9 +7,10 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Acceso denegado</title>
+        <title>Google Sign-In</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-signin-client_id" content="515154896975-vaj0sk89onkk5kgc1km6d5mm30kev17l.apps.googleusercontent.com">
         <link rel="stylesheet" href="">
     </head>
     <body>
@@ -17,6 +18,44 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         
-        <h1>Acceso denegado..</h1>
+        <h1>Google Sign-In</h1>
+        <hr/>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <br/>
+        <a href="#" onclick="signOut();">Sign out</a>
+
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script>
+            var url = (window.location.hostname.includes('localhost'))
+                        ? 'http://localhost:8080/api/auth/google'
+                        : 'http://estebanapi.net/api/auth/google';
+
+            function onSignIn(googleUser) {
+                var profile = googleUser.getBasicProfile();
+                console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                console.log('Name: ' + profile.getName());
+                console.log('Image URL: ' + profile.getImageUrl());
+                console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+                var id_token = googleUser.getAuthResponse().id_token;
+
+                const data = { id_token };
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify( data )
+                })
+                .then(resp => resp.json())
+                .then(data => console.log('Server loco', data))
+                .catch(console.log);
+            }
+
+            function signOut() {
+                var auth2 = gapi.auth2.getAuthInstance();
+                auth2.signOut().then(function () {
+                console.log('User signed out.');
+                });
+            }
+        </script>
     </body>
 </html>

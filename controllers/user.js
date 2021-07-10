@@ -33,12 +33,16 @@ const userGet = async(req = request, res = response) => {
 }
 
 const userPost = async(req, res = response) => {
-    const { name, email, pass, img, rol } = req.body;
-    const user = new User({ name, email, pass, img, rol });
+    const { name, email, pass, img, rol, google } = req.body;
+    const user = new User({ name, email, pass, img, rol, google });
 
-    // Encriptar la clave del usuario...
-    const salt = bcryptjs.genSaltSync();
-    user.pass = bcryptjs.hashSync(pass, salt);
+    if (!google) {
+        // Encriptar la clave del usuario...
+        const salt = bcryptjs.genSaltSync();
+        user.pass = bcryptjs.hashSync(pass, salt);
+    } else {
+        user.pass = ':P';
+    }
 
     // Guardar en la BD
     await user.save();
@@ -50,14 +54,16 @@ const userPost = async(req, res = response) => {
 
 const userPut = async(req, res = response) => {
     const { id } = req.params;
-    const { _id, password, google, correo, ...residue} = req.body;
+    const { _id, password, correo, ...residue} = req.body;
 
     //TODO validar contra DB
 
-    if ( password ) {
+    if ( !residue.google && password ) {
         // Encriptar la clave del usuario...
         const salt = bcryptjs.genSaltSync();
         residue.pass = bcryptjs.hashSync(pass, salt);
+    } else {
+        residue.pass = ':P';
     }
 
     await User.findByIdAndUpdate(id, residue);
