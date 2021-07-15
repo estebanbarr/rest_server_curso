@@ -66,8 +66,7 @@ const userPut = async(req, res = response) => {
         residue.pass = ':P';
     }
 
-    await User.findByIdAndUpdate(id, residue);
-    const user = await User.findById( id );
+    const user = await User.findByIdAndUpdate(id, residue, { new: true });
 
     res.json(user);
 }
@@ -85,8 +84,7 @@ const userDelete = async(req, res = response) => {
     // const user = await User.findByIdAndDelete( id );
 
     // Eliminacion logica...
-    await User.findByIdAndUpdate( id, { status: false } );
-    const user = await User.findById( id );
+    const user = await User.findByIdAndUpdate( id, { status: false }, { new: true } );
 
     res.json(user);
 }

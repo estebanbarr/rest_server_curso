@@ -1,5 +1,7 @@
-const Role = require('../models/role');
-const User = require('../models/user');
+const Role     = require('../models/role');
+const User     = require('../models/user');
+const Category = require('../models/category');
+const Product  = require('../models/product');
 
 const isValidRole = async(role = '') => {
     const existRole = await Role.findOne({ role });
@@ -18,7 +20,7 @@ const existsEmail = async(email = '') => {
 
 const existsUser = async( id ) => {
     const existsUser = await User.findById(id);
-    if (existsUser) {
+    if (existsUser && existsUser.status) {
         return true;
     }
 
@@ -31,16 +33,60 @@ const validateUserIdMustExists = async( id ) => {
     }
 }
 
+const existsCategory = async( id ) => {
+    const existsCategory = await Category.findById(id);
+    if (existsCategory && existsCategory.status) {
+        return true;
+    }
+
+    return false;
+}
+
+const validateCategoryIDMustExists = async( id ) => {
+    if ( ! await existsCategory(id) ) {
+        throw new Error(`No se encontró una categoria para el id: [${ id }]`);
+    }
+}
+
+const existsProduct = async( id ) => {
+    const existsProduct = await Product.findById(id);
+    if (existsProduct && existsProduct.status) {
+        return true;
+    }
+
+    return false;
+}
+
+const validateProductIDMustExists = async( id ) => {
+    if ( ! await existsProduct(id) ) {
+        throw new Error(`No se encontró una producto para el id: [${ id }]`);
+    }
+}
+
 const isValidNewEmail = async(email = '') => {
     if ( await existsEmail(email) ) {
         throw new Error(`El email [${ email }] ya está registrado`);
     }
 }
 
+const validateAllowedCollections = (collection, collections) => {
+    const include = collections.includes(collection);
+    if (!include) {
+        throw new Error(`La coleccion [${ collection }] no esta permitida o soportada. Colecciones permitidas: [${ collections }]`);
+    }
+
+    return true;
+}
+
 module.exports = {
     isValidRole,
     isValidNewEmail,
     validateUserIdMustExists,
+    validateCategoryIDMustExists,
+    validateProductIDMustExists,
     existsEmail,
-    existsUser
+    existsUser,
+    existsCategory,
+    existsProduct,
+    validateAllowedCollections
 }

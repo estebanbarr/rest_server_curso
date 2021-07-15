@@ -1,3 +1,18 @@
 node_modules/
 
 .env
+
+uploads/**.png
+uploads/**.jpg
+uploads/**.jpeg
+uploads/**.gif
+
+uploads/products/**.png
+uploads/products/**.jpg
+uploads/products/**.jpeg
+uploads/products/**.gif
+
+uploads/users/**.png
+uploads/users/**.jpg
+uploads/users/**.jpeg
+uploads/users/**.gif
